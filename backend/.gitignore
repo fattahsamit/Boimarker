@@ -1,0 +1,28 @@
+# Backend .gitignore (Python)
+
+venv/
+.env
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# VS Code settings
+.vscode/
+
+# pytest cache
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# coverage reports
+htmlcov/
+.coverage
+.tox/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/

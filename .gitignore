@@ -1,0 +1,31 @@
+# Root .gitignore
+
+# Ignore node_modules and venv in any subdirectory
+node_modules/
+**/node_modules/
+venv/
+**/venv/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Ignore build and cache outputs
+dist/
+build/
+.cache/
+.next/
+out/
+coverage/
+
+# Ignore IDE/editor config files
+.vscode/
+.idea/
+*.swp
