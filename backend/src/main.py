@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, Form, UploadFile, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from .auth import get_current_user
 import shutil
+import io
 from sqlalchemy.orm import Session
 from .database import SessionLocal, engine
 from . import models, schemas, crud, auth
@@ -59,3 +61,41 @@ def list_books(
 ):
     books = db.query(models.Book).filter(models.Book.owner_id == current_user.id).all()
     return books
+
+@app.get("/books/{book_id}/download")
+def download_book(
+    book_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    book = db.query(models.Book).filter(
+        models.Book.id == book_id,
+        models.Book.owner_id == current_user.id
+    ).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    # Return the file as a streaming response
+    return StreamingResponse(
+        io.BytesIO(book.file_data),
+        media_type=book.mimetype or "application/octet-stream",
+        headers={
+            "Content-Disposition": f'attachment; filename="{book.filename}"'
+        }
+    )
+
+@app.delete("/books/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_book(
+    book_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    book = db.query(models.Book).filter(
+        models.Book.id == book_id,
+        models.Book.owner_id == current_user.id
+    ).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    db.delete(book)
+    db.commit()
+    return
