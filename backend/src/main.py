@@ -99,3 +99,48 @@ def delete_book(
     db.delete(book)
     db.commit()
     return
+
+# Save or update progress
+@app.post("/books/{book_id}/progress", response_model=schemas.ProgressOut)
+def save_progress(
+    book_id: int,
+    progress_in: schemas.ProgressIn,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    # Ensure the user owns the book
+    book = db.query(models.Book).filter(
+        models.Book.id == book_id,
+        models.Book.owner_id == current_user.id
+    ).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    # Check if progress already exists
+    progress = db.query(models.Progress).filter_by(
+        book_id=book_id, user_id=current_user.id
+    ).first()
+    if progress:
+        progress.position = progress_in.position
+    else:
+        progress = models.Progress(
+            book_id=book_id, user_id=current_user.id, position=progress_in.position
+        )
+        db.add(progress)
+    db.commit()
+    db.refresh(progress)
+    return progress
+
+# Retrieve progress
+@app.get("/books/{book_id}/progress", response_model=schemas.ProgressOut)
+def get_progress(
+    book_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    progress = db.query(models.Progress).filter_by(
+        book_id=book_id, user_id=current_user.id
+    ).first()
+    if not progress:
+        raise HTTPException(status_code=404, detail="No progress found for this book")
+    return progress

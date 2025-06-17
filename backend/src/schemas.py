@@ -22,4 +22,15 @@ class BookOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+class ProgressIn(BaseModel):
+    position: str
+
+class ProgressOut(BaseModel):
+    book_id: int
+    user_id: int
+    position: str
+
+    class Config:
+        orm_mode = True
     
