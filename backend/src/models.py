@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, LargeBinary
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -16,8 +16,9 @@ class Book(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     filename = Column(String, nullable=False)
+    mimetype = Column(String, nullable=True)
+    file_data = Column(LargeBinary, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
-
     owner = relationship("User", back_populates="books")
     progress = relationship("Progress", back_populates="book")
 

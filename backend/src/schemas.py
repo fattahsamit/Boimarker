@@ -15,4 +15,11 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class BookOut(BaseModel):
+    id: int
+    title: str
+    filename: str
+
+    class Config:
+        orm_mode = True
     

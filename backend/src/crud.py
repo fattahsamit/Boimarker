@@ -11,3 +11,16 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def create_book(db: Session, title: str, filename: str, mimetype: str, file_bytes: bytes, owner_id: int):
+    db_book = models.Book(
+        title=title,
+        filename=filename,
+        mimetype=mimetype,
+        file_data=file_bytes,
+        owner_id=owner_id
+    )
+    db.add(db_book)
+    db.commit()
+    db.refresh(db_book)
+    return db_book
