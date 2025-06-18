@@ -1,20 +1,14 @@
 // src/components/layout/main-layout.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "../../app/contexts/AuthContext";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "../../app/contexts/AuthContext"; // Make sure this import is correct
-import {
-  BookmarkIcon,
-  TagIcon,
-  SearchIcon,
-  PlusCircleIcon,
-  HomeIcon,
-  MenuIcon,
-} from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { SearchIcon, HomeIcon, MenuIcon, BookmarkIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -24,17 +18,22 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { logout } = useAuth(); // Make sure we get logout from context
+  const router = useRouter();
+  const { token, logout } = useAuth();
   const [open, setOpen] = useState(false);
+
+  // Check authentication
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  }, [token, router]);
 
   const routes = [
     { href: "/dashboard", label: "Dashboard", icon: HomeIcon },
-    { href: "/bookmarks", label: "Bookmarks", icon: BookmarkIcon },
-    { href: "/tags", label: "Tags", icon: TagIcon },
     { href: "/search", label: "Search", icon: SearchIcon },
   ];
 
-  // Create a separate handler for logout
   const handleLogout = () => {
     console.log("Logout button clicked");
     logout();
@@ -55,8 +54,14 @@ export default function MainLayout({
         </SheetTrigger>
         <SheetContent side="left" className="w-[240px] sm:w-[300px]">
           <div className="flex flex-col h-full">
-            <div className="py-4 border-b">
-              <h2 className="text-2xl font-bold px-4">Boimarker</h2>
+            <div className="px-6 py-4">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 text-2xl font-bold"
+              >
+                <BookmarkIcon className="h-6 w-6 text-primary" />
+                Boimarker
+              </Link>
             </div>
             <nav className="flex-1 py-4">
               <ul className="space-y-2 px-2">
@@ -81,7 +86,11 @@ export default function MainLayout({
               </ul>
             </nav>
             <div className="border-t py-4 px-4">
-              {/* Fix: Use onClick handler for mobile logout */}
+              {/* Add theme toggle to mobile menu */}
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-sm font-medium">Toggle Theme</span>
+                <ThemeToggle />
+              </div>
               <Button
                 variant="outline"
                 className="w-full"
@@ -95,11 +104,17 @@ export default function MainLayout({
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex flex-col w-64 border-r bg-card">
-        <div className="p-6 border-b">
-          <h1 className="text-2xl font-bold">Boimarker</h1>
+      <div className="hidden lg:flex flex-col w-64 bg-card">
+        <div className="px-6 py-6">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 text-2xl font-bold hover:opacity-80 transition-opacity"
+          >
+            <BookmarkIcon className="h-6 w-6 text-primary" />
+            Boimarker
+          </Link>
         </div>
-        <nav className="flex-1 py-6">
+        <nav className="flex-1">
           <ul className="space-y-2 px-2">
             {routes.map((route) => {
               const Icon = route.icon;
@@ -121,7 +136,11 @@ export default function MainLayout({
           </ul>
         </nav>
         <div className="p-4 border-t">
-          {/* Fix: Use onClick handler for desktop logout */}
+          {/* Add theme toggle to desktop sidebar */}
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-medium">Theme</span>
+            <ThemeToggle />
+          </div>
           <Button variant="outline" className="w-full" onClick={handleLogout}>
             Logout
           </Button>
@@ -129,14 +148,12 @@ export default function MainLayout({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col border-l">
         <header className="h-16 border-b flex items-center justify-between px-6">
           <div className="lg:hidden w-6" /> {/* Spacer for mobile */}
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm">
-              <PlusCircleIcon className="h-4 w-4 mr-2" />
-              Add Bookmark
-            </Button>
+          <div className="flex items-center gap-2">
+            {/* Theme toggle in header */}
+            <ThemeToggle />
           </div>
           <Avatar className="h-8 w-8">
             <AvatarFallback>U</AvatarFallback>

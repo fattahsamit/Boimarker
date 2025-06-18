@@ -1,13 +1,13 @@
-import "./globals.css";
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { AuthProvider } from "../app/contexts/AuthContext";
+import "./globals.css";
+import { Providers } from "./providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Boimarker - Bookmark Manager",
-  description: "A modern bookmark management app",
+export const metadata = {
+  title: "Boimarker",
+  description: "E-book management and reading app",
 };
 
 export default function RootLayout({
@@ -16,9 +16,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider>{children}</AuthProvider>
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );
