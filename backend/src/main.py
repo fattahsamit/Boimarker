@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from .database import SessionLocal, engine
 from . import models, schemas, crud, auth
 
+from fastapi.middleware.cors import CORSMiddleware
+
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
 
 models.Base.metadata.create_all(bind=engine)
@@ -144,3 +146,12 @@ def get_progress(
     if not progress:
         raise HTTPException(status_code=404, detail="No progress found for this book")
     return progress
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Next.js default dev port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
