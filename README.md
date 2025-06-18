@@ -1,23 +1,23 @@
 # Boimarker
 
-A full-stack web application for managing an eBook collection, supporting user authentication, book uploads, and browsing via a Next.js (TypeScript) frontend and a FastAPI backend.
+A modern web application for managing your eBook library. Upload, organize, and read your books from anywhere with this sleek, responsive interface.
 
 ---
 
 ## Features
 
-- User registration and login (JWT authentication)
-- Upload eBooks (e.g., EPUB, PDF)
-- Browse uploaded books
-- RESTful API (FastAPI)
-- TypeScript Next.js frontend
-- Protected routes for authenticated users
+- **User Authentication**: Secure registration and login system
+- **Book Management**: Upload, browse, and organize your eBook collection
+- **Online Reader**: Read your books directly in the browser
+- **Responsive Design**: Works on desktop and mobile devices
+- **Dark/Light Mode**: Toggle between themes for comfortable reading
+- **File Support**: Handles popular formats like PDF and EPUB
 
 ---
 
 ## Technologies
 
-- **Frontend:** Next.js
+- **Frontend:** Next.js with TypeScript, Shadcn
 - **Backend:** FastAPI
 - **Auth:** JWT tokens
 - **Database:** PostgreSQL
@@ -75,14 +75,17 @@ npm run dev
 
 ### Authentication
 
-- `POST /register` — Register with `{ "email": "...", "password": "..." }`
-- `POST /token` — Login with `username=<email>&password=...` (form data), returns `{ "access_token": "...", ... }`
+- `POST /register` — Register a new user
+
+- `POST /token` — Login and retrieve access token
 
 ### Books
 
 - `GET /books` — List all books
-- `POST /books/upload` — Upload an eBook file (multipart/form-data, field: `file`)
-- (Add more endpoints as needed)
+- `POST /books/upload` — Upload a new book
+- `GET /books/{id}` — Get book details
+- `GET /books/{id}/file` — Get book file for reading
+- `GET /books/{id}/download` — Download book file
 
 ---
 
