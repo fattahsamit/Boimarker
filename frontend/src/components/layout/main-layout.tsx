@@ -99,11 +99,7 @@ export default function MainLayout({
                   );
                 })}
 
-                <li className="pt-4">
-                  <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground">
-                    Info
-                  </div>
-                </li>
+                <li className="py-4"></li>
 
                 {secondaryRoutes.map((route) => {
                   const Icon = route.icon;
