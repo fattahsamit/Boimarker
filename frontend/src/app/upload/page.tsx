@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext"; // Adjust the import path as needed
 
 export default function UploadBook() {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
+  const { token } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -14,6 +16,9 @@ export default function UploadBook() {
     const res = await fetch("http://localhost:8000/books/upload", {
       method: "POST",
       body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (res.ok) {
