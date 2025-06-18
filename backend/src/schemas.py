@@ -19,6 +19,8 @@ class BookOut(BaseModel):
     id: int
     title: str
     filename: str
+    mimetype: str
+    owner_id: int
 
     class Config:
         orm_mode = True
@@ -33,4 +35,3 @@ class ProgressOut(BaseModel):
 
     class Config:
         orm_mode = True
-    

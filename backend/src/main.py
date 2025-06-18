@@ -149,6 +149,20 @@ def get_progress(
         raise HTTPException(status_code=404, detail="No progress found for this book")
     return progress
 
+@app.get("/books/{book_id}", response_model=schemas.BookOut)
+def get_book(
+    book_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    book = db.query(models.Book).filter(
+        models.Book.id == book_id,
+        models.Book.owner_id == current_user.id
+    ).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return book
+
 
 app.add_middleware(
     CORSMiddleware,
