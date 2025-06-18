@@ -1,10 +1,13 @@
+import "./globals.css";
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { AuthProvider } from "../app/contexts/AuthContext";
-// import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Boimarker",
-  description: "Personal Library",
+  title: "Boimarker - Bookmark Manager",
+  description: "A modern bookmark management app",
 };
 
 export default function RootLayout({
@@ -14,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.className}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

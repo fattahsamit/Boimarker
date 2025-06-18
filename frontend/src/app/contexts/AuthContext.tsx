@@ -1,66 +1,109 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
 import {
-  login as apiLogin,
-  register as apiRegister,
-  AuthResponse,
-} from "../../lib/api/auth";
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useRouter } from "next/navigation";
 
-interface AuthContextType {
-  user: string | null;
-  token: string | null;
+type AuthContextType = {
+  isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => void;
-}
+  token: string | null;
+  isLoading: boolean;
+};
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [user, setUser] = useState<string | null>(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const t = localStorage.getItem("token");
-    const u = localStorage.getItem("user");
-    if (t && u) {
-      setToken(t);
-      setUser(u);
+    // Check if user is logged in on mount
+    // Only execute in browser environment
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        setToken(storedToken);
+        setIsLoggedIn(true);
+      }
+      setIsLoading(false);
     }
   }, []);
 
   const login = async (email: string, password: string) => {
-    const data = await apiLogin(email, password);
-    localStorage.setItem("token", data.access_token);
-    localStorage.setItem("user", email);
-    setToken(data.access_token);
-    setUser(email);
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || "Invalid credentials");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.access_token);
+      setToken(data.access_token);
+      setIsLoggedIn(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const register = async (email: string, password: string) => {
-    await apiRegister(email, password);
-    await login(email, password); // Optionally auto-login
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || "Registration failed");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    // Only execute in browser environment
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+    }
+
     setToken(null);
-    setUser(null);
+    setIsLoggedIn(false);
+    router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, login, register, logout, token, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }
