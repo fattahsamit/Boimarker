@@ -23,22 +23,22 @@ def get_db():
     finally:
         db.close()
 
-# Dummy user for demonstration
-fake_user_db = {
-    "test@example.com": {
-        "email": "test@example.com",
-        "password": "test123",  # Plaintext for example only!
-    }
-}
+# # Dummy user for demonstration
+# fake_user_db = {
+#     "test@example.com": {
+#         "email": "test@example.com",
+#         "password": "test123",  # Plaintext for example only!
+#     }
+# }
 
-@app.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    # The OAuth2PasswordRequestForm always sends 'username' field (you use email as username)
-    user = fake_user_db.get(form_data.username)
-    if not user or user["password"] != form_data.password:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    # Return a fake token for demonstration
-    return {"access_token": "mocktoken", "token_type": "bearer"}
+# @app.post("/token")
+# async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+#     # The OAuth2PasswordRequestForm always sends 'username' field (you use email as username)
+#     user = fake_user_db.get(form_data.username)
+#     if not user or user["password"] != form_data.password:
+#         raise HTTPException(status_code=400, detail="Incorrect username or password")
+#     # Return a fake token for demonstration
+#     return {"access_token": "mocktoken", "token_type": "bearer"}
 
 @app.post("/register", response_model=schemas.UserOut)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):

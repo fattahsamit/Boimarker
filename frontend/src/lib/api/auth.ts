@@ -18,10 +18,10 @@ export async function login(
   email: string,
   password: string
 ): Promise<AuthResponse> {
-  const res = await fetch("http://localhost:8000/token", {
+  const res = await fetch("http://localhost:8000/login", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ username: email, password }).toString(),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
   });
   if (!res.ok) throw new Error("Invalid credentials");
   return res.json();

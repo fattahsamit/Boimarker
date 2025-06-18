@@ -4,6 +4,25 @@ import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+export async function login(email: string, password: string) {
+  const res = await fetch(`${API_URL}/token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Invalid credentials");
+  }
+
+  const data = await res.json();
+  return data;
+}
+
 export default function LoginPage() {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
