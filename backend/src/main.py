@@ -16,6 +16,17 @@ MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://boimarker.onrender.com"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 def get_db():
     db = SessionLocal()
     try:
@@ -162,15 +173,3 @@ def get_book(
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
     return book
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        # "https://your-frontend-url.vercel.app"  # Add your Vercel frontend URL here
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
