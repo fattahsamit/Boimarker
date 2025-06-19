@@ -20,7 +20,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://boimarker.onrender.com"
+        "https://boimarker.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
