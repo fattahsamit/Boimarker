@@ -166,7 +166,10 @@ def get_book(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        # "https://your-frontend-url.vercel.app"  # Add your Vercel frontend URL here
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
