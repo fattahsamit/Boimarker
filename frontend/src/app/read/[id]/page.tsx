@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { BookWithProgress } from "@/types/book";
 
+// Get the API URL from environment variables
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function ReadBookPage({ params }: { params: { id: string } }) {
   // Get bookId safely from params
   const bookId = parseInt(params.id);
@@ -35,12 +38,12 @@ export default function ReadBookPage({ params }: { params: { id: string } }) {
         console.log("Attempting to fetch book with ID:", bookId);
 
         // First try to debug the API endpoints
-        console.log("API URL:", `http://localhost:8000/books/${bookId}`);
+        console.log("API URL:", `${API_URL}/books/${bookId}`);
 
         // Fetch book details with error handling
         let response;
         try {
-          response = await fetch(`http://localhost:8000/books/${bookId}`, {
+          response = await fetch(`${API_URL}/books/${bookId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -67,7 +70,7 @@ export default function ReadBookPage({ params }: { params: { id: string } }) {
         // Now try to fetch the file directly
         try {
           const fileResponse = await fetch(
-            `http://localhost:8000/books/${bookId}/download`,
+            `${API_URL}/books/${bookId}/download`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -96,7 +99,7 @@ export default function ReadBookPage({ params }: { params: { id: string } }) {
         // Try to fetch progress as a separate step
         try {
           const progressResponse = await fetch(
-            `http://localhost:8000/books/${bookId}/progress`,
+            `${API_URL}/books/${bookId}/progress`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -141,7 +144,7 @@ export default function ReadBookPage({ params }: { params: { id: string } }) {
     if (!token || !bookId) return;
 
     try {
-      await fetch(`http://localhost:8000/books/${bookId}/progress`, {
+      await fetch(`${API_URL}/books/${bookId}/progress`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -250,7 +253,7 @@ export default function ReadBookPage({ params }: { params: { id: string } }) {
               </p>
               <Button
                 onClick={() =>
-                  (window.location.href = `http://localhost:8000/books/${bookId}/download`)
+                  (window.location.href = `${API_URL}/books/${bookId}/download`)
                 }
               >
                 Download Instead

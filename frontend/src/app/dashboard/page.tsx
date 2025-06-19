@@ -30,6 +30,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// Get the API URL from environment variables
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 // If you don't have a BookWithProgress type, you can use this one
 type BookWithProgress = {
   id: number;
@@ -58,7 +61,7 @@ export default function DashboardPage() {
 
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://localhost:8000/books", {
+        const response = await fetch(`${API_URL}/books`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -86,14 +89,11 @@ export default function DashboardPage() {
 
   const handleDownload = async (bookId: number) => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/books/${bookId}/download`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/books/${bookId}/download`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to download book");
@@ -142,15 +142,12 @@ export default function DashboardPage() {
     setIsDeleting(true);
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/books/${bookToDelete.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/books/${bookToDelete.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete book");

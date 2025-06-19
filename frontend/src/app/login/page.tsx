@@ -19,6 +19,9 @@ import { useAuth } from "../contexts/AuthContext";
 import { BookmarkIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+// Get the API URL from environment variables
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +38,7 @@ export default function LoginPage() {
 
     try {
       // Changed to use email field in the payload instead of username
-      const response = await fetch("http://localhost:8000/login", {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Changed to JSON format

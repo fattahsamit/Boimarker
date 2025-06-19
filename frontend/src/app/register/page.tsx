@@ -17,6 +17,9 @@ import { Label } from "@/components/ui/label";
 import { BookmarkIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+// Get the API URL from environment variables
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,7 +42,7 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8000/register", {
+      const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

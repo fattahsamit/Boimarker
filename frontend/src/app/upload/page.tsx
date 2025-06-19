@@ -17,6 +17,9 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BookIcon, FileIcon, UploadIcon } from "lucide-react";
 
+// Get the API URL from environment variables
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function UploadBook() {
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -47,7 +50,7 @@ export default function UploadBook() {
       formData.append("file", file);
       formData.append("title", title);
 
-      const response = await fetch("http://localhost:8000/books/upload", {
+      const response = await fetch(`${API_URL}/books/upload`, {
         method: "POST",
         body: formData,
         headers: {
